@@ -1,16 +1,99 @@
+
 <!DOCTYPE html>
-
-<html>
-
+<html lang="en">
 <head>
-	<link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Random User App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 20px;
+    }
+    .user-container {
+      margin-bottom: 20px;
+    }
+    img {
+      border-radius: 50%;
+      width: 150px;
+      height: 150px;
+    }
+    .buttons {
+      margin: 15px;
+    }
+    .buttons button {
+      margin: 5px;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+    #additional-info {
+      margin-top: 20px;
+      font-size: 1.2em;
+      color: #333;
+    }
+  </style>
 </head>
-
 <body>
-	<!-- the entire body must be written by student -->
-    <script type="text/javascript" src="./script.js">
-</script>
+  <div class="user-container">
+    <img id="user-photo" src="" alt="User Photo">
+    <h2 id="user-name"></h2>
+  </div>
 
+  <div class="buttons">
+    <button data-attr="age" onclick="showInfo('age')">Age</button>
+    <button data-attr="email" onclick="showInfo('email')">Email</button>
+    <button data-attr="phone" onclick="showInfo('phone')">Phone</button>
+  </div>
+
+  <div id="additional-info">
+    <!-- Additional info will be displayed here -->
+  </div>
+
+  <button id="getUser" onclick="fetchUser()">Get New User</button>
+
+  <script>
+    let userData = {};
+
+    // Function to fetch a random user
+    async function fetchUser() {
+      try {
+        const response = await fetch('https://randomuser.me/api/');
+        const data = await response.json();
+        const user = data.results[0];
+
+        // Store relevant user data
+        userData = {
+          name: `${user.name.first} ${user.name.last}`,
+          photo: user.picture.large,
+          age: user.dob.age,
+          email: user.email,
+          phone: user.phone
+        };
+
+        // Update the UI with the new user's info
+        document.getElementById('user-name').textContent = userData.name;
+        document.getElementById('user-photo').src = userData.photo;
+        document.getElementById('additional-info').textContent = '';
+      } catch (error) {
+        console.error('Error fetching user:', error);
+      }
+    }
+
+    // Function to show additional info
+    function showInfo(attr) {
+      const infoElement = document.getElementById('additional-info');
+
+      // Check if the attribute exists in the user data
+      if (userData[attr]) {
+        infoElement.textContent = userData[attr];
+      } else {
+        infoElement.textContent = 'No data available.';
+      }
+    }
+
+    // Initial user fetch on page load
+    fetchUser();
+  </script>
 </body>
-
 </html>
